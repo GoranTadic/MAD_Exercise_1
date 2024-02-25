@@ -8,6 +8,7 @@ class App {
     fun playNumberGame(digitsToGuess: Int = 4) {
         //TODO: build a menu which calls the functions and works with the return values
 
+
         var generatedNumber = generateRandomNonRepeatingNumber(digitsToGuess)
 
         while (true) {
@@ -21,7 +22,7 @@ class App {
 
             try {
                 val compareResult = checkUserInputAgainstGeneratedNumber(userInput, generatedNumber)
-                println("Output: ${compareResult.m}:${compareResult.n}")
+                println(compareResult)
 
                 if (compareResult.m == digitsToGuess) {
                     println("Congratulations! You guessed the number correctly.")
@@ -81,28 +82,50 @@ class App {
      *         The result is formatted as "Output: m:n", where "m" and "n" represent the above values, respectively.
      * @throws IllegalArgumentException if the inputs do not have the same number of digits.
      */
-    val checkUserInputAgainstGeneratedNumber: (Int, Int) -> CompareResult = { input, generatedNumber ->
-        //TODO implement the function
+    val checkUserInputAgainstGeneratedNumber: (Int, Int) -> CompareResult =
+        { input, generatedNumber ->
+            //TODO implement the function
 
-        val inputString = input.toString()
-        val generatedString = generatedNumber.toString()
+            var number = generatedNumber
+            var inputNumber = input
+            var countRight = 0
+            var count = 0
+            var inputList = mutableListOf<Int>()
+            var myList = mutableListOf<Int>()
 
-        if (inputString.length != generatedString.length) {
-            throw IllegalArgumentException("Inputs must have the same number of digits.")
+            while (number > 0) {
+                myList.add(0, number % 10)
+                number /= 10
+            }
+
+            while (inputNumber > 0) {
+                inputList.add(0, inputNumber % 10)
+                inputNumber /= 10
+            }
+
+            if (inputList.size != myList.size){
+                throw IllegalArgumentException("Inputs must have the same number of digits.")
+            }
+
+
+            var mySet = myList.intersect(inputList)
+            count = mySet.size
+
+            for (i in 0..inputList.size - 1) {
+                if (myList.get(i) == inputList.get(i)) {
+                    countRight++
+                }
+            }
+
+            CompareResult(count, countRight)
         }
+}
 
-        val n = inputString.count { digit -> generatedString.contains(digit) }
-        val m = inputString.zip(generatedString).count { (inputDigit, generatedDigit) -> inputDigit == generatedDigit }
+    fun main() {
+        println("Hello World!")
+        // TODO: call the App.playNumberGame function with and without default arguments
 
-        CompareResult(n, m)
+        App().playNumberGame()
+
+        App().playNumberGame(5)
     }
-}
-
-fun main() {
-    println("Hello World!")
-    // TODO: call the App.playNumberGame function with and without default arguments
-
-    App().playNumberGame()
-
-    App().playNumberGame(6)
-}
